@@ -36,3 +36,12 @@ export  default async function obtenerProductosDestacados(categoria, cantidad){
         id: doc.id
     }));
 }
+
+export async function obtenerProductosPublicados() {
+    const consulta = query(
+        collection(db, "productos"),
+        where("publicado", "==", true)
+    );
+    const resultado = await getDocs(consulta);
+    return resultado.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
+}

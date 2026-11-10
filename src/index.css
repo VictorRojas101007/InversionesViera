@@ -1,0 +1,25 @@
+@import url('https://fonts.googleapis.com/css2?family=Archivo+Narrow:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --color-navy: #00003c;
+  --color-accent: #fcd400;
+  --color-paper: #f9f9f9;
+  --color-line: #c6c5d5;
+  --color-muted: #464653;
+  --font-sans: 'Inter', sans-serif;
+  --font-display: 'Archivo Narrow', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+
+@layer base {
+  body { @apply m-0 bg-paper font-sans text-navy antialiased; min-width: 320px; }
+  h1, h2, h3 { @apply font-display; }
+  button, select, summary, a { -webkit-tap-highlight-color: transparent; }
+  button, select, summary { cursor: pointer; }
+  button:disabled { cursor: default; opacity: .4; }
+  a { text-decoration: none; }
+  :focus-visible { outline: 2px solid #777eea; outline-offset: 4px; }
+  input, select { @apply min-w-0 border border-line bg-white px-3 py-3 text-navy; }
+  input:focus, select:focus { border-color: var(--color-navy); }
+}

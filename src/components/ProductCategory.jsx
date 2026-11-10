@@ -242,7 +242,10 @@ async function manejarEliminar(producto) {
 
         <>
         <Header onBuscar={manejarBusqueda} />
-        <div className="filtrosProductos">
+        <main className={`catalogPage catalogPage--${category}`}>
+        {category === "aros" && <section className="catalogIntro"><h1>Catálogo de aros</h1><p>Precisión estructural y diseño de alto impacto. Explora nuestra selección de rines.</p></section>}
+        <aside className="filtrosProductos" aria-label="Filtros de productos">
+          <h2>Filtros</h2>
   <label>
     Marca
     <select
@@ -293,9 +296,10 @@ async function manejarEliminar(producto) {
   <button type="button" onClick={() => setFiltros({})}>
     Limpiar filtros
   </button>
-</div>
+</aside>
+        <section className="catalogResults">
         <div className="headerContent">
-            <h1>{category.toUpperCase()}</h1>
+            <h2>{category === "aros" ? "Todos los modelos" : category.toUpperCase()}</h2>
             {(productosFiltrados.length != 0) ? <p>Mostrar {productosFiltrados.length} resultados </p> : <p>Sin resultados</p>}
         </div>
         <div className='ProudctsContainer'>
@@ -337,15 +341,19 @@ async function manejarEliminar(producto) {
                <ProductCard  onDelete={manejarEliminar} key={product.id} product={product} esDueno={esDueno}/>
             ))}
 
-            <button  onClick={() => setPaginaActual((page) => Math.max(1, page - 1))} disabled={paginaActual===1} >
-                -
+            <nav className="pagination" aria-label="Paginación">
+            <button aria-label="Página anterior" onClick={() => setPaginaActual((page) => Math.max(1, page - 1))} disabled={paginaActual===1} >
+                ‹
             </button>
                 <span> Página {paginaActual} de {totalPaginas} </span>
-            <button onClick={() => setPaginaActual((page) => Math.min(totalPaginas, page + 1))} disabled={paginaActual===totalPaginas} >
-                +
+            <button aria-label="Página siguiente" onClick={() => setPaginaActual((page) => Math.min(totalPaginas, page + 1))} disabled={paginaActual===totalPaginas} >
+                ›
             </button >
+            </nav>
 
         </div>
+        </section>
+        </main>
         <Footer />
         </>
 

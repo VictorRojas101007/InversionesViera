@@ -1,5 +1,6 @@
 function Footer() {
     return (
+        <>
         <footer>
             <h1>Inversiones Viera</h1>
             <nav>
@@ -11,6 +12,8 @@ function Footer() {
             </nav>
             <p>© 2026 INVERSIONES VIERA. Todos los derechos reservados.</p>
         </footer>
+        <a className="floatingWhatsapp" href="https://wa.me/51949638333" target="_blank" rel="noopener noreferrer" aria-label="Cotizar por WhatsApp"><img src="/design/whatsapp.svg" alt="" /></a>
+        </>
     )
 }
 

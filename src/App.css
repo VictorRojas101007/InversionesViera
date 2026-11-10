@@ -1,0 +1,213 @@
+@reference "./index.css";
+
+@layer components {
+  .siteHeader { @apply relative z-30 flex h-16 items-center justify-between border-b border-line bg-navy px-16 text-white; }
+  .brand { @apply shrink-0 font-display text-2xl font-semibold uppercase; letter-spacing: -1.2px; }
+  .desktopNav { @apply flex items-center gap-8 font-mono text-xs uppercase; letter-spacing: .6px; }
+  .desktopNav a { @apply px-3 py-2; opacity: .8; }
+  .desktopNav a.active, .desktopNav a:hover { @apply text-accent; opacity: 1; }
+  .searchToggle { @apply flex h-10 w-10 items-center justify-center; }
+  .searchToggle img { width: 18px; height: 18px; }
+  .searchPanel { @apply absolute right-16 top-16 w-80 border border-line bg-paper p-4 shadow-lg; }
+  .searchPanel input { @apply w-full text-sm; }
+  .mobileMenu, .bottomNav { display: none; }
+
+  .heroSection { @apply relative isolate flex min-h-[562px] flex-col items-start justify-center overflow-hidden border-b border-line px-16 py-16; background: #e8e8e8; }
+  .heroSection::before { content: ''; position: absolute; inset: 0; z-index: -2; background: url('/design/hero.png') center / cover no-repeat; opacity: .4; }
+  .heroSection::after { content: ''; position: absolute; inset: 0; z-index: -1; background: linear-gradient(90deg, rgba(0,0,60,.92), rgba(0,0,60,.68) 48%, rgba(0,0,60,.12)); }
+  .heroSection h1 { @apply max-w-[672px] text-[64px] font-bold leading-[1.1] tracking-[-1.28px] text-white; }
+  .heroSection p { @apply mb-8 mt-6 max-w-[580px] text-lg leading-[1.6]; color: #f1f1f7; text-shadow: 0 1px 4px rgba(0,0,0,.4); }
+  .primaryButton { @apply inline-flex min-h-16 items-center justify-center gap-4 bg-accent px-8 py-4 font-display text-2xl font-semibold uppercase; color: #6e5c00; }
+  .primaryButton img { width: 16px; height: 16px; }
+  .primaryButton:hover, .botonCotizar:hover { background-color: #ebc600; }
+  .categoriesSection { @apply mx-auto my-[120px] grid max-w-[1152px] grid-cols-2 gap-6; }
+  .llantasCard, .arosCard { @apply relative isolate flex min-h-96 flex-col items-start justify-end overflow-hidden border border-line p-8; background-position: center; background-size: cover; }
+  .llantasCard { background-image: url('/design/llantas.png'); }
+  .arosCard { background-image: url('/design/aros.png'); }
+  .llantasCard::before, .arosCard::before { content: ''; position: absolute; inset: 0; z-index: -1; background: linear-gradient(0deg, rgba(0,0,60,.9), rgba(0,0,60,.4) 50%, transparent); }
+  .categoriesSection h2 { @apply mb-2 text-[40px] font-bold leading-[1.2] text-white uppercase; }
+  .categoriesSection p { @apply mb-4 text-base leading-6; color: #f1f1f7; text-shadow: 0 1px 4px rgba(0,0,0,.4); }
+  .exploreButton { @apply border border-accent px-6 py-2 font-mono text-xs uppercase text-accent; letter-spacing: .6px; }
+  .exploreButton:hover { @apply bg-accent text-navy; }
+  .featuredSection { @apply mx-auto max-w-[1280px] border-y border-line bg-[#f3f3f3] px-16 py-[120px]; }
+  .sectionHeading { @apply mb-12 flex items-end justify-between gap-4 border-b border-[#767684] pb-4; }
+  .sectionHeading h2 { @apply text-[40px] font-bold leading-[1.2] uppercase; }
+  .sectionHeading > a { @apply inline-flex shrink-0 items-center gap-1 py-2 font-mono text-xs uppercase; }
+  .sectionHeading > a img { flex-shrink: 0; }
+  .productosDestacados { @apply grid grid-cols-4 gap-6; }
+
+  .catalogPage { @apply mx-auto grid max-w-[1280px] grid-cols-[256px_minmax(0,1fr)] items-start gap-8 px-16 pb-[168px] pt-12; min-height: calc(100svh - 250px); }
+  .filtrosProductos { @apply flex min-w-0 flex-col gap-8; }
+  .filtrosProductos h2 { @apply border-b border-line pb-2 font-display text-2xl font-semibold uppercase; }
+  .filtrosProductos > label { @apply flex min-w-0 flex-col gap-4 font-mono text-xs uppercase text-muted; letter-spacing: .6px; }
+  .filtrosProductos select { @apply w-full font-sans text-sm normal-case; letter-spacing: normal; }
+  .filtrosProductos > button { @apply self-start border-b border-navy pb-1 font-mono text-xs uppercase; }
+  .catalogResults { @apply min-w-0; }
+  .headerContent { @apply mb-8 border-b border-line pb-4; }
+  .headerContent h2 { @apply text-[40px] font-bold leading-[1.2] uppercase; }
+  .headerContent p { @apply mt-1 font-mono text-xs text-muted; letter-spacing: .6px; }
+  .ProudctsContainer { @apply grid grid-cols-3 items-stretch gap-6; }
+  .ProudctsContainer > p, .ProudctsContainer > button, .ProudctsContainer > form { grid-column: 1 / -1; }
+  .ProudctsContainer > button { @apply justify-self-start border border-navy px-5 py-3 font-mono text-xs; }
+  .pagination { @apply col-span-full mt-2 flex items-center justify-center gap-3 border-t border-line pt-8 font-mono text-xs text-muted; }
+  .pagination button { @apply flex h-10 w-10 items-center justify-center border border-line text-xl; }
+  .pagination button:hover:not(:disabled) { @apply bg-navy text-white; }
+  .catalogIntro { grid-column: 1 / -1; }
+  .catalogIntro h1 { @apply text-[64px] font-bold leading-[1.1] tracking-[-1.28px] uppercase; }
+  .catalogIntro p { @apply mt-2 text-lg leading-[1.6] text-muted; }
+  .catalogPage--aros { @apply gap-y-12; }
+  .catalogPage--aros .catalogIntro { @apply mb-8; }
+  .catalogPage--aros .headerContent { @apply border-b-2 border-navy; }
+
+  .productCard { @apply relative flex min-w-0 flex-col overflow-hidden border border-line bg-white; }
+  .productImage { @apply relative flex h-[257px] w-full shrink-0 items-center justify-center border-b border-line bg-[#f3f3f3] p-8; }
+  .productImage > img { @apply h-full w-full object-contain; }
+  .productBadge { @apply absolute left-4 top-4 bg-navy px-2 py-1 font-mono text-[10px] uppercase text-white; }
+  .terrainBadge { @apply absolute bottom-4 left-4 bg-accent px-2 py-1 font-mono text-[10px] uppercase; color: #6e5c00; }
+  .productBrand { @apply font-mono text-[10px] uppercase text-muted; letter-spacing: .6px; }
+  .productSpecs { @apply mb-4 grid grid-cols-2 gap-2 border-y border-line py-3; }
+  .productSpecs dt { @apply font-mono text-[10px] uppercase text-muted; }
+  .productSpecs dd { @apply mt-1 break-words text-sm font-semibold; }
+  .productosDestacados .productSpecs, .productosDestacados .productMeasure { display: none; }
+  .productosDestacados .productBrand { order: -1; }
+  .catalogResults .productBrand { display: none; }
+  .imagePending { @apply font-mono text-xs text-muted; }
+  .productDescription { @apply flex flex-1 flex-col p-6; }
+  .productDescription h3 { @apply mb-2 break-words text-2xl font-semibold leading-[1.25] uppercase; }
+  .productDescription > p { @apply mb-2 font-mono text-xs leading-5 text-muted; letter-spacing: .6px; }
+  .buttonContainer { @apply mt-auto pt-2; }
+  .botonCotizar { @apply flex min-h-[52px] items-center justify-center gap-2 bg-accent px-3 py-3 text-center font-display text-base leading-6 uppercase; color: #6e5c00; }
+  .botonCotizar img { flex-shrink: 0; }
+  .productDescription > button { @apply mt-3 border border-red-300 px-3 py-2 font-mono text-xs text-red-700; }
+  .productosDestacados .productImage { @apply h-48 bg-paper p-4; }
+  .productosDestacados .productDescription { @apply p-4; }
+  .productosDestacados .productDescription > p { @apply text-[10px]; }
+  .productosDestacados .botonCotizar { @apply text-sm; }
+
+  footer { @apply border-t border-[#767684] bg-[#0a0a0a] px-4 py-8 text-center; }
+  footer h1 { @apply mb-6 font-display text-2xl font-semibold uppercase text-white; }
+  footer ul { @apply mb-8 flex flex-wrap items-center justify-center gap-6 font-mono text-xs uppercase; color: #474746; letter-spacing: .6px; }
+  footer a:hover { @apply text-accent; }
+  footer p { @apply text-sm leading-5; color: #8a8888; }
+  .floatingWhatsapp { display: none; }
+  .homePage .floatingWhatsapp { @apply fixed bottom-8 right-8 z-40 flex items-center justify-center rounded-xl bg-[#25d366] p-4 shadow-lg; }
+  .floatingWhatsapp img { flex-shrink: 0; }
+  .ProudctsContainer form { @apply grid grid-cols-2 gap-4 border border-line bg-white p-6; }
+  .ProudctsContainer form label { @apply flex flex-col gap-2 text-sm; }
+  .ProudctsContainer form button { @apply bg-navy px-5 py-3 text-white; }
+}
+
+@media (min-width: 768px) and (max-width: 1199px) {
+  .siteHeader { padding-inline: 32px; }
+  .desktopNav { gap: 8px; }
+  .categoriesSection { margin-inline: 32px; }
+  .featuredSection, .catalogPage { padding-inline: 32px; }
+  .catalogPage { grid-template-columns: 200px minmax(0,1fr); gap: 24px; }
+  .ProudctsContainer { grid-template-columns: repeat(2, minmax(0,1fr)); }
+  .productosDestacados { grid-template-columns: repeat(2, minmax(0,1fr)); }
+}
+
+@media (max-width: 767px) {
+  body { padding-bottom: calc(64px + env(safe-area-inset-bottom)); }
+  .siteHeader { padding-inline: 16px; gap: 12px; }
+  .brand { font-size: 24px; margin-inline: auto; }
+  .desktopNav { display: none; }
+  .mobileMenu { display: block; }
+  .mobileMenu summary { display: flex; width: 28px; height: 36px; flex-direction: column; justify-content: center; gap: 4px; list-style: none; }
+  .mobileMenu summary::-webkit-details-marker { display: none; }
+  .mobileMenu summary span { height: 1px; width: 18px; background: #c6c5d5; }
+  .mobileMenu nav { position: absolute; top: 64px; left: 0; right: 0; display: flex; flex-direction: column; gap: 8px; padding: 16px; background: #00003c; border-top: 1px solid #464653; }
+  .mobileMenu nav a { padding: 12px; font: 12px var(--font-mono); text-transform: uppercase; }
+  .mobileMenu nav a.active { color: #fcd400; }
+  .searchPanel { right: 16px; left: 16px; width: auto; }
+  .bottomNav { position: fixed; bottom: 0; left: 0; right: 0; z-index: 50; display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); background: white; border-top: 1px solid #c6c5d5; padding-bottom: env(safe-area-inset-bottom); }
+  .bottomNav a { min-height: 64px; display: flex; align-items: center; justify-content: center; gap: 4px; flex-direction: column; font: 10px var(--font-mono); text-transform: uppercase; }
+  .bottomNav a.active { background: #fcd400; }
+  .bottomNav img { flex-shrink: 0; }
+  .heroSection { min-height: 500px; padding: 64px 16px; }
+  .heroSection h1 { max-width: 340px; font-size: 32px; letter-spacing: -.64px; }
+  .heroSection p { max-width: 340px; font-size: 16px; line-height: 1.6; }
+  .primaryButton { min-height: 60px; font-size: 20px; padding: 14px 24px; }
+  .categoriesSection { grid-template-columns: minmax(0,1fr); margin: 120px 16px; gap: 24px; }
+  .llantasCard, .arosCard { min-height: 384px; padding: 32px; }
+  .categoriesSection h2 { font-size: 32px; }
+  .featuredSection { padding: 120px 16px; }
+  .sectionHeading { margin-bottom: 48px; }
+  .sectionHeading h2 { font-size: 28px; }
+  .sectionHeading > a { font-size: 9px; }
+  .productosDestacados { grid-template-columns: minmax(0,1fr); gap: 24px; }
+  .productosDestacados .productImage { height: 224px; }
+  .catalogPage { display: flex; flex-direction: column; gap: 24px; padding: 32px 16px 120px; }
+  .catalogResults { width: 100%; }
+  .filtrosProductos { width: 100%; flex-direction: row; align-items: end; gap: 12px; padding-bottom: 16px; overflow-x: auto; }
+  .filtrosProductos h2 { flex-shrink: 0; align-self: center; border: 0; background: #00003c; color: white; padding: 10px 12px; font: 12px var(--font-mono); }
+  .filtrosProductos > label { flex: 0 0 160px; gap: 8px; font-size: 10px; }
+  .filtrosProductos select { padding: 9px; font-size: 12px; }
+  .filtrosProductos > button { flex-shrink: 0; align-self: center; margin: 0 4px; font-size: 10px; }
+  .headerContent h2 { font-size: 32px; }
+  .ProudctsContainer { grid-template-columns: minmax(0,1fr); }
+  .productImage { height: 257px; }
+  .catalogIntro h1 { max-width: 340px; font-size: 64px; }
+  .catalogIntro p { max-width: 340px; font-size: 16px; }
+  .catalogPage--aros .catalogIntro { margin: 16px 0 72px; }
+  .catalogPage--aros .headerContent h2 { font-size: 40px; }
+  .floatingWhatsapp { bottom: calc(80px + env(safe-area-inset-bottom)); right: 16px; padding: 12px; }
+  .ProudctsContainer form { grid-template-columns: minmax(0,1fr); padding: 16px; }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  a, button { transition: background-color 150ms ease, color 150ms ease; }
+}
+
+/* Resultados de Home junto al campo de búsqueda. */
+.searchPanel--results { width: min(640px, calc(100vw - 32px)); color: var(--color-navy); }
+.homeSearchResults { margin-top: 16px; }
+.homeSearchResults > p { font-size: 13px; padding-bottom: 12px; }
+.homeSearchGrid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; max-height: min(60svh, 600px); overflow-y: auto; overscroll-behavior: contain; }
+.homeSearchGrid .productImage { height: 120px; padding: 12px; }
+.homeSearchGrid .productDescription { padding: 12px; }
+.homeSearchGrid .productDescription h3 { font-size: 20px; }
+.homeSearchGrid .productSpecs { display: none; }
+.homeSearchGrid .botonCotizar { min-height: 40px; font-size: 14px; padding: 8px; }
+@media (max-width: 767px) {
+  .searchPanel--results { width: auto; }
+  .homeSearchGrid { grid-template-columns: minmax(0, 1fr); }
+  .homeSearchGrid .productImage { display: none; }
+}
+
+@layer components {
+  .loginMain { @apply mx-auto grid min-h-[calc(100svh-250px)] max-w-[1280px] grid-cols-2 items-center gap-16 px-16 py-20; }
+  .loginIntro { @apply relative isolate flex min-h-[520px] flex-col items-start justify-center overflow-hidden bg-navy p-12 text-white; }
+  .loginIntro::before { content: ''; position: absolute; inset: 0; z-index: -1; background: linear-gradient(90deg, rgba(0,0,60,.96), rgba(0,0,60,.72)), url('/design/hero.png') center / cover; }
+  .loginEyebrow { @apply mb-5 block font-mono text-xs uppercase; letter-spacing: 1.8px; }
+  .loginIntro .loginEyebrow { @apply text-accent; }
+  .loginIntro h1 { @apply mb-6 text-5xl font-bold leading-[1.1]; }
+  .loginIntro p { @apply max-w-sm text-base leading-7 text-[#f1f1f7]; }
+  .loginBack { @apply mt-10 border-b border-accent pb-2 font-mono text-xs text-accent; }
+  .loginCard { @apply w-full max-w-[460px] justify-self-center border border-line border-t-4 border-t-accent bg-white p-10; }
+  .loginCard .loginEyebrow { @apply mb-3 text-muted; }
+  .loginCard h2 { @apply text-[40px] font-bold uppercase leading-tight; }
+  .loginDescription { @apply mb-8 mt-3 text-sm leading-6 text-muted; }
+  .loginForm { @apply flex flex-col; }
+  .loginForm label { @apply mb-2 font-mono text-xs uppercase; letter-spacing: .6px; }
+  .loginForm input { @apply mb-6 w-full bg-paper text-base; min-height: 48px; }
+  .loginForm input::placeholder { color: #6b6b78; }
+  .loginForm .primaryButton { @apply mt-2 w-full text-xl; }
+  .loginError { @apply mb-4 border border-red-200 bg-red-50 p-3 text-sm text-red-800; }
+  .loginCatalogLink { @apply mt-8 block border-t border-line pt-5 text-center font-mono text-xs leading-5 text-muted; }
+  .loginCatalogLink:hover { @apply text-navy underline; }
+}
+@media (max-width: 1023px) {
+  .loginMain { gap: 32px; padding: 48px 32px; }
+  .loginIntro { padding: 32px; }
+  .loginIntro h1 { font-size: 40px; }
+  .loginCard { padding: 32px; }
+}
+@media (max-width: 767px) {
+  .loginMain { grid-template-columns: minmax(0,1fr); gap: 24px; padding: 32px 16px 48px; }
+  .loginIntro { min-height: 280px; padding: 32px 24px; }
+  .loginIntro h1 { font-size: 36px; }
+  .loginBack { margin-top: 24px; }
+  .loginCard { max-width: none; padding: 32px 24px; }
+  .loginCard h2 { font-size: 32px; }
+}
