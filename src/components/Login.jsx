@@ -67,7 +67,7 @@ function Login ({ esDueno }) {
                         {error && <p className="loginError" role="alert">{error}</p>}
                         <button className="primaryButton" type="submit">Ingresar <img src="/design/arrow.svg" alt="" /></button>
                     </form>
-                    <Link className="loginCatalogLink" to="/llantas">Ver catálogo de productos →</Link>
+                    <Link className="loginCatalogLink" to="/">Ver catálogo de productos →</Link>
                 </section>
             </main>
             <Footer />
