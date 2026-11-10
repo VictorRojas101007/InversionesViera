@@ -1,3 +1,4 @@
+import whatsappIcon from "../assets/whatsapp.svg";
 import { useState } from "react";
 import { NavLink } from "react-router-dom";
 
@@ -29,7 +30,7 @@ function Header({ onBuscar, resultadosBusqueda }) {
         <NavLink className="brand" to="/">Inversiones Viera</NavLink>
         <nav className="desktopNav" aria-label="Navegación principal">
           {enlaces.map(({ to, label }) => <NavLink key={to} to={to} end>{label}</NavLink>)}
-          <a href="https://wa.me/51949638333" target="_blank" rel="noopener noreferrer">Cotizar</a>
+          <a href="https://wa.me/51949638333" target="_blank" rel="noopener noreferrer"><img src={whatsappIcon} alt="" />Cotizar</a>
         </nav>
         <button
           className="searchToggle"
@@ -59,7 +60,7 @@ function Header({ onBuscar, resultadosBusqueda }) {
         {enlaces.map(({ to, label, icon }) => (
           <NavLink key={to} to={to} end><img src={icon} alt="" /><span>{label}</span></NavLink>
         ))}
-        <a href="https://wa.me/51949638333" target="_blank" rel="noopener noreferrer"><img src="/design/quote.svg" alt="" /><span>Cotizar</span></a>
+        <a href="https://wa.me/51949638333" target="_blank" rel="noopener noreferrer"><img src={whatsappIcon} alt="" /><span>Cotizar</span></a>
       </nav>
     </>
   );

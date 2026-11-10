@@ -1,3 +1,4 @@
+import whatsappIcon from "../assets/whatsapp.svg";
 const TELEFONO_WHATSAPP = "51949638333"; // Reemplazar por el número real
 
 function ProductCard({ product, esDueno, onDelete }) {
@@ -51,7 +52,7 @@ ${detalle}
             target="_blank"
             rel="noopener noreferrer"
           >
-            <img src="/design/chat.svg" alt="" />
+            <img src={whatsappIcon} alt="" />
             <span>Cotizar por WhatsApp</span>
           </a>
         </div>
