@@ -1,4 +1,3 @@
-@reference "./index.css";
 
 @layer components {
   .siteHeader { @apply relative z-30 flex h-16 items-center justify-between border-b border-line bg-navy px-16 text-white; }
