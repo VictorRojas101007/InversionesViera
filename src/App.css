@@ -219,3 +219,67 @@
 .desktopNav a[href*="wa.me"] img, footer a[href*="wa.me"] img { width: 20px; height: 20px; }
 .bottomNav a[href*="wa.me"] img { width: 24px; height: 24px; }
 .floatingWhatsapp img { width: 30px; height: 30px; }
+
+.productImage {
+  position: relative;
+  aspect-ratio: 4 / 3;
+}
+
+.productImage > .fotoCatalogo {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  transition: opacity 180ms ease;
+}
+
+.cargaFoto {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 8px;
+  color: #39394c;
+  font-size: 0.85rem;
+}
+
+/* Llanta */
+.ruedaCarga {
+  display: block;
+  box-sizing: border-box;
+  width: 40px;
+  height: 40px;
+  border: 8px solid #25262c;
+  border-top-color: #d5a900;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle, #393b41 0 22%, transparent 24%),
+    repeating-conic-gradient(#9297a1 0deg 12deg, #e5e7ea 12deg 60deg);
+  animation: girarRueda 1.2s linear infinite;
+}
+
+/* Aro plateado */
+.ruedaCarga--aro {
+  border: 3px solid #8b919b;
+  background:
+    radial-gradient(circle, #666d78 0 12%, #c9ced6 13% 23%, transparent 24%),
+    repeating-conic-gradient(
+      from -9deg,
+      #858c97 0deg 5deg,
+      #dce0e6 5deg 18deg,
+      transparent 18deg 72deg
+    );
+}
+
+@keyframes girarRueda {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ruedaCarga {
+    animation: none;
+  }
+}

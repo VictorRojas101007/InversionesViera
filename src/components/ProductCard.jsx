@@ -1,79 +1,132 @@
-import whatsappIcon from "../assets/whatsapp.svg";
 import { useState } from "react";
-const TELEFONO_WHATSAPP = "51949638333"; 
+import whatsappIcon from "../assets/whatsapp.svg";
 
-function ProductCard({ product, esDueno, onDelete }) {
+const TELEFONO_WHATSAPP = "51949638333";
 
-
-  const [urlFallida, setUrlFallida] = useState(null);
-  const mostrarImagen = Boolean(product.image) && product.image !== urlFallida;
-  const nombre =
-    product.name || product.descripcion || product.marca || "producto";
-
-  const medida = product.medida || product.medidaAro || "No especificada";
-
-  const detalle =
-    product.categoria === "llanta"
-      ? `PR: ${product.pr ?? "No especificado"}`
-      : `Ancho: ${product.anchoAro ?? "No especificado"}`;
-
-  const mensaje = `Hola, quiero cotizar este producto:
-
-${nombre}
-Marca: ${product.marca || "No especificada"}
-Medida: ${medida}
-${detalle}
-
-¿Me confirman el precio y la disponibilidad?`;
-
-  const enlaceWhatsApp =
-    `https://wa.me/${TELEFONO_WHATSAPP}?text=${encodeURIComponent(mensaje)}`;
+function FotoProducto({ product, nombre }) {
+  const [estado, setEstado] = useState("cargando");
+  const esAro = product.categoria === "aro";
+  const sinImagen = !product.image || estado === "error";
 
   return (
-    <article className={`productCard productCard--${product.categoria}`}>
-      <div className="productImage">
-  {mostrarImagen ? (
     <>
-      <img
-        src={product.image}
-        alt={product.imagenReferencial ? `Imagen referencial de ${nombre}` : nombre}
-        onError={() => setUrlFallida(product.image)}
-      />
+      <div className="productImage">
+        {sinImagen ? (
+          <span className="imagePending">Imagen no disponible</span>
+        ) : (
+          <>
+            {estado === "cargando" && (
+              <div className="cargaFoto" role="status">
+                <span
+                  className={esAro ? "ruedaCarga ruedaCarga--aro" : "ruedaCarga"}
+                  aria-hidden="true"
+                />
+                <span>Cargando…</span>
+              </div>
+            )}
 
-    </>
-  ) : (
-    <span className="imagePending">Imagen no disponible</span>
-  )}
+            <img
+              className="fotoCatalogo"
+              src={product.image}
+              alt={
+                product.imagenReferencial
+                  ? `Imagen referencial de ${nombre}`
+                  : nombre
+              }
+              style={{ opacity: estado === "lista" ? 1 : 0 }}
+              onLoad={() => setEstado("lista")}
+              onError={() => setEstado("error")}
+            />
+          </>
+        )}
 
-  {product.destacado && <span className="productBadge">Destacado</span>}
+        {product.destacado && (
+          <span className="productBadge">Destacado</span>
+        )}
 
-  {product.tipoTerreno && (
-    <span className="terrainBadge">{product.tipoTerreno}</span>
-  )}
-</div>
+        {product.tipoTerreno && (
+          <span className="terrainBadge">{product.tipoTerreno}</span>
+        )}
+      </div>
 
-      {mostrarImagen && product.imagenReferencial && (
+      {estado === "lista" && product.imagenReferencial && (
         <small className="imagenReferencial">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true">
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.6"
+            aria-hidden="true"
+          >
             <circle cx="12" cy="12" r="9" />
             <path d="M12 11v6M12 7v2" />
           </svg>
           <span>Imagen referencial</span>
         </small>
       )}
+    </>
+  );
+}
+
+function ProductCard({ product, esDueno, onDelete }) {
+  const esLlanta = product.categoria === "llanta";
+  const nombre =
+    product.name || product.descripcion || product.marca || "Producto";
+  const medida = product.medida || product.medidaAro;
+
+  const especificaciones = esLlanta
+    ? [
+        ["Aplicación", product.aplicacion],
+        ["Lonas", product.pr != null && product.pr !== "" ? `${product.pr} PR` : null],
+      ]
+    : [
+        ["Diámetro", product.diametroAro],
+        ["Ancho", product.anchoAro],
+        ["Huecos", product.cantidadHuecos],
+        ["Offset (ET)", product.et],
+      ];
+
+  const camposVisibles = especificaciones.filter(
+    ([, valor]) => valor != null && valor !== ""
+  );
+
+  const mensaje = [
+    "Hola, quiero cotizar este producto:",
+    "",
+    nombre,
+    product.marca && `Marca: ${product.marca}`,
+    medida && `Medida: ${medida}`,
+    ...camposVisibles.map(([etiqueta, valor]) => `${etiqueta}: ${valor}`),
+    "",
+    "¿Me confirman el precio y la disponibilidad?",
+  ]
+    .filter((linea) => linea != null)
+    .join("\n");
+
+  const enlaceWhatsApp =
+    `https://wa.me/${TELEFONO_WHATSAPP}?text=${encodeURIComponent(mensaje)}`;
+
+  return (
+    <article className={`productCard productCard--${product.categoria}`}>
+      <FotoProducto key={product.image} product={product} nombre={nombre} />
 
       <div className="productDescription">
-        <p className="productBrand">{product.marca}</p>
+        {product.marca && <p className="productBrand">{product.marca}</p>}
         <h3>{nombre}</h3>
-        <p className="productMeasure">{medida}</p>
-        <dl className="productSpecs">
-          <div><dt>{product.categoria === "llanta" ? "Aplicación" : "Diámetro"}</dt><dd>{product.categoria === "llanta" ? (product.aplicacion || "—") : (product.diametroAro || "—")}</dd></div>
-          <div><dt>{product.categoria === "llanta" ? "Lonas" : "Ancho"}</dt><dd>{product.categoria === "llanta" ? `${product.pr ?? "—"} PR` : (product.anchoAro || "—")}</dd></div>
-          {product.categoria === "aro" && <>
-            <div><dt>Huecos</dt><dd>{product.cantidadHuecos || "—"}</dd></div>
-            <div><dt>Offset (ET)</dt><dd>{product.et || "—"}</dd></div>
-          </>}
-        </dl>
+        {medida && <p className="productMeasure">{medida}</p>}
+
+        {camposVisibles.length > 0 && (
+          <dl className="productSpecs">
+            {camposVisibles.map(([etiqueta, valor]) => (
+              <div key={etiqueta}>
+                <dt>{etiqueta}</dt>
+                <dd>{valor}</dd>
+              </div>
+            ))}
+          </dl>
+        )}
 
         <div className="buttonContainer">
           <a
@@ -87,7 +140,7 @@ ${detalle}
           </a>
         </div>
 
-        {esDueno && (
+        {esDueno && onDelete && (
           <button type="button" onClick={() => onDelete(product)}>
             Borrar
           </button>
