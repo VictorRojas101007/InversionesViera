@@ -1,7 +1,12 @@
 import whatsappIcon from "../assets/whatsapp.svg";
-const TELEFONO_WHATSAPP = "51949638333"; // Reemplazar por el número real
+import { useState } from "react";
+const TELEFONO_WHATSAPP = "51949638333"; 
 
 function ProductCard({ product, esDueno, onDelete }) {
+
+
+  const [urlFallida, setUrlFallida] = useState(null);
+  const mostrarImagen = Boolean(product.image) && product.image !== urlFallida;
   const nombre =
     product.name || product.descripcion || product.marca || "producto";
 
@@ -27,10 +32,35 @@ ${detalle}
   return (
     <article className={`productCard productCard--${product.categoria}`}>
       <div className="productImage">
-        {product.image ? <img src={product.image} alt={nombre} /> : <span className="imagePending">Imagen no disponible</span>}
-        {product.destacado && <span className="productBadge">Destacado</span>}
-        {product.tipoTerreno && <span className="terrainBadge">{product.tipoTerreno}</span>}
-      </div>
+  {mostrarImagen ? (
+    <>
+      <img
+        src={product.image}
+        alt={product.imagenReferencial ? `Imagen referencial de ${nombre}` : nombre}
+        onError={() => setUrlFallida(product.image)}
+      />
+
+    </>
+  ) : (
+    <span className="imagePending">Imagen no disponible</span>
+  )}
+
+  {product.destacado && <span className="productBadge">Destacado</span>}
+
+  {product.tipoTerreno && (
+    <span className="terrainBadge">{product.tipoTerreno}</span>
+  )}
+</div>
+
+      {mostrarImagen && product.imagenReferencial && (
+        <small className="imagenReferencial">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true">
+            <circle cx="12" cy="12" r="9" />
+            <path d="M12 11v6M12 7v2" />
+          </svg>
+          <span>Imagen referencial</span>
+        </small>
+      )}
 
       <div className="productDescription">
         <p className="productBrand">{product.marca}</p>
