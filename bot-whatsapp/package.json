@@ -1,0 +1,1 @@
+{"name":"viera-bot","version":"1.0.0","private":true,"type":"module","engines":{"node":"24.x"},"scripts":{"demo":"node demo.js","test":"node --test pruebas.js","start":"node --env-file-if-exists=.env servidor.js","probar":"node --env-file=.env consola.js"}}
