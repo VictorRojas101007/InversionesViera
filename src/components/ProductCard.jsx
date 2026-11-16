@@ -1,9 +1,11 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
+import { productPath, productType, formatPR } from "../utils/productDetails.js";
 import whatsappIcon from "../assets/whatsapp.svg";
 
 const TELEFONO_WHATSAPP = "51949638333";
 
-function FotoProducto({ product, nombre }) {
+export function FotoProducto({ product, nombre }) {
   const [estado, setEstado] = useState("cargando");
   const esAro = product.categoria === "aro";
   const sinImagen = !product.image || estado === "error";
@@ -79,14 +81,14 @@ function ProductCard({ product, esDueno, onDelete }) {
   const especificaciones = esLlanta
     ? [
         ["Aplicación", product.aplicacion],
-        ["Lonas", product.pr != null && product.pr !== "" ? `${product.pr} PR` : null],
+        ["Lonas", formatPR(product.pr)],
       ]
-    : [
+    : productType(product) === 'aro' ? [
         ["Diámetro", product.diametroAro],
         ["Ancho", product.anchoAro],
         ["Huecos", product.cantidadHuecos],
         ["Offset (ET)", product.et],
-      ];
+      ] : [["Tipo", product.tipoArticulo], ["Compatibilidad", product.compatibilidad]];
 
   const camposVisibles = especificaciones.filter(
     ([, valor]) => valor != null && valor !== ""
@@ -110,11 +112,13 @@ function ProductCard({ product, esDueno, onDelete }) {
 
   return (
     <article className={`productCard productCard--${product.categoria}`}>
-      <FotoProducto key={product.image} product={product} nombre={nombre} />
+      <Link className="productDetailLink" to={productPath(product)} aria-label={`Ver ${nombre}`}>
+        <FotoProducto key={product.image} product={product} nombre={nombre} />
+      </Link>
 
       <div className="productDescription">
         {product.marca && <p className="productBrand">{product.marca}</p>}
-        <h3>{nombre}</h3>
+        <Link className="productDetailLink" to={productPath(product)}><h3>{nombre}</h3></Link>
         {medida && <p className="productMeasure">{medida}</p>}
 
         {camposVisibles.length > 0 && (
@@ -129,6 +133,7 @@ function ProductCard({ product, esDueno, onDelete }) {
         )}
 
         <div className="buttonContainer">
+          <Link className="viewProduct" to={productPath(product)}>Ver producto</Link>
           <a
             className="botonCotizar"
             href={enlaceWhatsApp}

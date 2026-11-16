@@ -8,7 +8,7 @@ const enlaces = [
   { to: "/aros", label: "Aros", icon: "/design/rims.svg" },
 ];
 
-function Header({ onBuscar, resultadosBusqueda }) {
+function Header({ onBuscar, resultadosBusqueda, mostrarBuscador = true }) {
   const [buscadorAbierto, setBuscadorAbierto] = useState(false);
   const [texto, setTexto] = useState("");
 
@@ -24,15 +24,16 @@ function Header({ onBuscar, resultadosBusqueda }) {
         <details className="mobileMenu">
           <summary aria-label="Abrir navegación"><span /><span /><span /></summary>
           <nav aria-label="Menú principal">
-            {enlaces.map(({ to, label }) => <NavLink key={to} to={to} end>{label}</NavLink>)}
+            {enlaces.map(({ to, label }) => <NavLink key={to} to={to} end={to === "/"}>{label}</NavLink>)}
           </nav>
         </details>
         <NavLink className="brand" to="/">Inversiones Viera</NavLink>
         <nav className="desktopNav" aria-label="Navegación principal">
-          {enlaces.map(({ to, label }) => <NavLink key={to} to={to} end>{label}</NavLink>)}
+          {enlaces.map(({ to, label }) => <NavLink key={to} to={to} end={to === "/"}>{label}</NavLink>)}
           <a href="https://wa.me/51949638333" target="_blank" rel="noopener noreferrer"><img src={whatsappIcon} alt="" />Cotizar</a>
         </nav>
-        <button
+        {!mostrarBuscador && <span className="searchToggle" aria-hidden="true" />}
+        {mostrarBuscador && <button
           className="searchToggle"
           type="button"
           aria-label="Buscar productos"
@@ -41,7 +42,7 @@ function Header({ onBuscar, resultadosBusqueda }) {
           onClick={() => setBuscadorAbierto((abierto) => !abierto)}
         >
           <img src="/design/search.svg" alt="" />
-        </button>
+        </button>}
         {buscadorAbierto && (
           <div className={`searchPanel${resultadosBusqueda ? " searchPanel--results" : ""}`}>
             <input
@@ -58,7 +59,7 @@ function Header({ onBuscar, resultadosBusqueda }) {
       </header>
       <nav className="bottomNav" aria-label="Navegación móvil">
         {enlaces.map(({ to, label, icon }) => (
-          <NavLink key={to} to={to} end><img src={icon} alt="" /><span>{label}</span></NavLink>
+          <NavLink key={to} to={to} end={to === "/"}><img src={icon} alt="" /><span>{label}</span></NavLink>
         ))}
         <a href="https://wa.me/51949638333" target="_blank" rel="noopener noreferrer"><img src={whatsappIcon} alt="" /><span>Cotizar</span></a>
       </nav>
