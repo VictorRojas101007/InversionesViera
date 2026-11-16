@@ -11,10 +11,10 @@ async function consultar(filtros, limite) {
   const r=await fetch(base+":runQuery",{method:"POST",headers:{"Content-Type":"application/json"},signal:AbortSignal.timeout(10000),body:JSON.stringify({structuredQuery:{
     from:[{collectionId:"productos"}],where:{compositeFilter:{op:"AND",filters:[campo("publicado",{booleanValue:true}),...filtros]}},limit:limite
   }})});
- if (!r.ok) {
+if (!r.ok) {
   const detalle = await r.text();
-  console.error("Error Firestore:", r.status, detalle);
-  throw new Error("Firestore " + r.status + ": " + detalle);
+  console.error("Respuesta de Meta:", detalle);
+  throw new Error(`Envío Meta ${r.status}: ${detalle}`);
 }
   return (await r.json()).filter(x=>x.document).map(({document:d})=>{
     const p={};
