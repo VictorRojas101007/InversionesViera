@@ -4,7 +4,7 @@ import { productPath, productType, formatPR } from "../utils/productDetails.js";
 import CopyProductButton from "./CopyProductButton.jsx";
 import whatsappIcon from "../assets/whatsapp.svg";
 
-const TELEFONO_WHATSAPP = "51949638333";
+const TELEFONO_WHATSAPP = "51937042895";
 
 export function FotoProducto({ product, nombre }) {
   const [estado, setEstado] = useState("cargando");
