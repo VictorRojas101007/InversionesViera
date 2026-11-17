@@ -13,7 +13,7 @@ function Footer() {
             </nav>
             <p>© 2026 INVERSIONES VIERA. Todos los derechos reservados.</p>
         </footer>
-        <a className="floatingWhatsapp" href="https://wa.me/51949638333" target="_blank" rel="noopener noreferrer" aria-label="Cotizar por WhatsApp"><img src={whatsappIcon} alt="" /></a>
+        <a className="floatingWhatsapp" href="https://wa.me/51937042895" target="_blank" rel="noopener noreferrer" aria-label="Cotizar por WhatsApp"><img src={whatsappIcon} alt="" /></a>
         </>
     )
 }
