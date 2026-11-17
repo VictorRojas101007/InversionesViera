@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../firebase.js';
+import CopyProductButton from './CopyProductButton.jsx';
 import Header from './Header.jsx';
 import Footer from './footer.jsx';
 import { FotoProducto } from './ProductCard.jsx';
@@ -18,7 +19,7 @@ const guidance = {
   servicio: 'Cuéntanos qué trabajo necesitas y el tipo de aro o vehículo para coordinar la atención.',
 };
 
-export default function ProductDetail({ category }) {
+export default function ProductDetail({ category, esDueno }) {
   const { productId } = useParams();
   const [result, setResult] = useState(null);
   const [attempt, setAttempt] = useState(0);
@@ -65,6 +66,7 @@ export default function ProductDetail({ category }) {
             {product.descripcion && product.descripcion !== name && <p className="detailDescription">{product.descripcion}</p>}
             <p className="detailDescription">{guidance[type]}</p>
             <a className="detailQuote" href={quoteLink(product)} target="_blank" rel="noopener noreferrer"><img src={whatsappIcon} alt="" /><span>{type === 'servicio' ? 'Consultar por WhatsApp' : 'Cotizar por WhatsApp'}</span></a>
+            {esDueno && <CopyProductButton key={product.id} product={product} />}
             <p className="detailAdvisor">Atención personalizada con un asesor de Inversiones Viera</p>
           </div>
         </article>

@@ -38,8 +38,8 @@ function App() {
       <Route path='*' element={<Home/>} />
       <Route path='/llantas' element={<ProductCategory category={"llantas"} esDueno={esDueño} />} />  
       <Route path='/aros' element={<ProductCategory category={"aros"} esDueno={esDueño} />} />  
-      <Route path='/llantas/:productId' element={<ProductDetail key="llantas" category="llantas" />} />
-      <Route path='/aros/:productId' element={<ProductDetail key="aros" category="aros" />} />
+      <Route path='/llantas/:productId' element={<ProductDetail key="llantas" category="llantas" esDueno={esDueño} />} />
+      <Route path='/aros/:productId' element={<ProductDetail key="aros" category="aros" esDueno={esDueño} />} />
       <Route path='/login'  element={<Login  esDueno={esDueño} />}  />  
 
     </Routes>

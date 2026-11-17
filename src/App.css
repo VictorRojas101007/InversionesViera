@@ -272,6 +272,25 @@
     );
 }
 
+.productCopy { margin-top: 12px; }
+.copyProductButton {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid var(--color-line, #cbd5e1);
+  border-radius: 6px;
+  cursor: pointer;
+  font: inherit;
+}
+.copyProductButton:hover { background: #eef2f6; }
+.copyProductButton:disabled { cursor: wait; opacity: 0.65; }
+.copyProductButton:focus-visible, .productCopy textarea:focus-visible {
+  outline: 2px solid #2563eb;
+  outline-offset: 2px;
+}
+.productCopyStatus { margin: 6px 0; font-size: 0.875rem; }
+.productCopyStatus:empty { display: none; }
+.productCopy textarea { width: 100%; padding: 8px; resize: vertical; font: inherit; }
+
 @keyframes girarRueda {
   to {
     transform: rotate(360deg);

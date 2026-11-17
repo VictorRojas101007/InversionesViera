@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { productPath, productType, formatPR } from "../utils/productDetails.js";
+import CopyProductButton from "./CopyProductButton.jsx";
 import whatsappIcon from "../assets/whatsapp.svg";
 
 const TELEFONO_WHATSAPP = "51949638333";
@@ -144,6 +145,10 @@ function ProductCard({ product, esDueno, onDelete }) {
             <span>Cotizar por WhatsApp</span>
           </a>
         </div>
+
+        {esDueno && (
+          <CopyProductButton key={product.id} product={product} />
+        )}
 
         {esDueno && onDelete && (
           <button type="button" onClick={() => onDelete(product)}>
