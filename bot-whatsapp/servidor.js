@@ -1,7 +1,7 @@
 import http from "node:http";
 import {createHmac,timingSafeEqual} from "node:crypto";
 import {DatabaseSync} from "node:sqlite";
-import {atender} from "./bot.js";
+import {atender,saludoPorHoraDePeru,orientar} from "./bot.js";
 import {api,variable} from "./datos.js";
 
 const secreto=variable("META_APP_SECRET");
@@ -51,13 +51,20 @@ async function procesar(){
     let respuesta=m.respuesta,contexto=m.contexto;
     if(!respuesta){
       const sesion=db.prepare("SELECT * FROM sesiones WHERE cliente=?").get(m.cliente);
-      const anterior=sesion && Date.now()-sesion.fecha<86400000 ? JSON.parse(sesion.datos) : {};
+      const primerMensaje=!sesion || Date.now()-sesion.fecha>=86400000;
+      const anterior=primerMensaje ? {} : JSON.parse(sesion.datos);
       let r;
-      try {r=m.texto ? await atender(m.texto,anterior,api) : {texto:"Por favor envía la consulta por escrito o escribe «asesor».",estado:anterior}}
+      try {
+        r=m.texto
+          ? await atender(m.texto,anterior,api,primerMensaje)
+          : {texto:primerMensaje ? `${saludoPorHoraDePeru()} 😊 Bienvenido a Inversiones Viera. ¿Qué producto buscas? Puedo ayudarte con llantas, aros, faros, accesorios o servicios.` : "Por favor envía la consulta por escrito o escribe «asesor».",estado:anterior};
+      }
       catch(e){
         console.error("Consulta",e.message.slice(0,100));
         if(m.intentos<2)throw e;
-        r={texto:"No pude verificar la cotización. Contacta a la tienda: "+api.contacto,estado:anterior};
+        const bienvenida=primerMensaje ? `${saludoPorHoraDePeru()} 😊 Bienvenido a Inversiones Viera. ` : "";
+        const ayuda=orientar(anterior,true);
+        r={...ayuda,texto:bienvenida+ayuda.texto};
       }
       respuesta=r.texto;contexto=JSON.stringify(r.estado);
       db.prepare("UPDATE mensajes SET respuesta=?,contexto=? WHERE id=?").run(respuesta,contexto,m.id);

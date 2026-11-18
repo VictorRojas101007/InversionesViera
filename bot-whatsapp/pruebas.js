@@ -87,3 +87,120 @@ test("busca accesorios y servicios dentro de aro, por descripción y sin mezclar
     else process.env.FIREBASE_PROJECT_ID=proyecto;
   }
 });
+
+test("selecciones locales respetan la página y no llaman a Gemini", async () => {
+  const lista = Array.from({length:7}, (_, n) => ({...p,id:`llanta_${n}`,descripcion:`Producto ${n}`}));
+  const api = {buscarCatalogo:async()=>lista,producto:async id=>lista.find(p=>p.id===id),interpretar:async()=>{throw new Error('No debe llamarse')}};
+  const inicio=await atender('llantas',{},api);
+  const segunda=await atender('más',inicio.estado,api);
+  for (const mensaje of ['1','el primero','quiero el primero','la primera opción','quiero la opción 1']) {
+    assert.equal((await atender(mensaje,segunda.estado,api)).estado.id,'llanta_5');
+  }
+  assert.equal((await atender('quiero la segunda',segunda.estado,api)).estado.id,'llanta_6');
+  for (const mensaje of ['0','3','el quinto']) {
+    const r=await atender(mensaje,segunda.estado,api);
+    assert.deepEqual(r.estado,segunda.estado);
+    assert.match(r.texto,mensaje === "0" ? /número válido/ : /escribe «1»/);
+  }
+});
+
+test("Gemini selecciona solo opciones válidas de la lista mostrada", async () => {
+  const estado={filtros:{categoria:'llanta'},opciones:['llanta_7','llanta_8'],opcionesDetalle:[{id:'llanta_7',nombre:'Alpha'},{id:'llanta_8',nombre:'Beta'}]};
+  let llamadas=0;
+  const api={producto:async id=>({...p,id}),interpretar:async(texto,previo)=>{llamadas++;assert.deepEqual(previo,estado);return {intencion:'seleccionar',opcion:2}}};
+  assert.equal((await atender('me quedo con la que aparece al final',estado,api)).estado.id,'llanta_8');
+  assert.equal(llamadas,1);
+  for (const opcion of [0,3,-1,1.5,'1',undefined]) {
+    const r=await atender('esa me gusta',estado,{...api,interpretar:async()=>({intencion:'seleccionar',opcion})});
+    assert.deepEqual(r.estado,estado);
+    assert.match(r.texto,opcion === 3 || opcion === undefined ? /escribe «1»/ : /número/);
+  }
+});
+
+test("aclaración, 503, timeout y respuesta inválida conservan lista y permiten contestar 1", async () => {
+  const estado={filtros:{categoria:'llanta'},opciones:[p.id],opcionesDetalle:[{id:p.id,nombre:'Prueba'}]};
+  for (const resultado of [{intencion:'aclarar'},null,new Error('Gemini 503'),new DOMException('The operation was aborted due to timeout','TimeoutError'),new SyntaxError('JSON inválido')]) {
+    let llamadas=0;
+    const api={producto:async()=>p,interpretar:async()=>{llamadas++;if(resultado instanceof Error)throw resultado;return resultado}};
+    const ayuda=await atender('esa de ahí',estado,api);
+    assert.deepEqual(ayuda.estado,estado);
+    assert.match(ayuda.texto,/escribe «1»/);
+    assert.doesNotMatch(ayuda.texto,/503|timeout|JSON/);
+    assert.equal((await atender('1',ayuda.estado,api)).estado.id,p.id);
+    assert.equal(llamadas,1);
+  }
+});
+
+test("cantidades y asesor se procesan localmente; una aclaración conserva producto", async () => {
+  const estado={id:p.id};
+  for (const texto of ['4','quiero 4','4 unidades','cuatro']) {
+    const r=await atender(texto,estado,{producto:async()=>p});
+    assert.match(r.texto,/mayorista/);
+  }
+  const r=await atender('no sé',estado,{interpretar:async()=>({intencion:'aclarar'})});
+  assert.deepEqual(r.estado,estado);
+  assert.match(r.texto,/«4»/);
+  assert.match((await atender('asesor',estado,{contacto:'Tienda'})).texto,/Tienda/);
+});
+
+test("saludos con errores no absorben más, aros, cantidades ni nombres", async () => {
+  for(const texto of ['holaa','buenos dias','buenas tardes','buenas noches']) {
+    assert.match((await atender(texto,{},{})).texto,/Qué producto buscas/);
+  }
+  const api={buscarCatalogo:async()=>[{...p,descripcion:'DIA'}],producto:async()=>p};
+  assert.equal((await atender('aros',{},api)).estado.id,p.id);
+  const estado={filtros:{categoria:'llanta'},opciones:[p.id],opcionesDetalle:[{id:p.id,nombre:'DIA'}]};
+  assert.equal((await atender('DIA',estado,api)).estado.id,p.id);
+});
+
+test("petición a Gemini incluye opciones de la página y admite seleccionar", async t => {
+  const {api}=await import('./datos.js');
+  const previos={GEMINI_MODEL:process.env.GEMINI_MODEL,GEMINI_API_KEY:process.env.GEMINI_API_KEY};
+  process.env.GEMINI_MODEL='modelo-prueba';process.env.GEMINI_API_KEY='clave-prueba';
+  t.mock.method(globalThis,'fetch',async(url,opciones)=>{
+    const cuerpo=JSON.parse(opciones.body);
+    const contexto=JSON.parse(cuerpo.contents[0].parts[0].text);
+    assert.deepEqual(contexto.opcionesMostradas,[{numero:1,id:'llanta_6',nombre:'Alpha'}]);
+    assert.ok(cuerpo.generationConfig.responseSchema.properties.intencion.enum.includes('seleccionar'));
+    return {ok:true,json:async()=>({candidates:[{content:{parts:[{text:'{"intencion":"seleccionar","opcion":1}'}]}}]})};
+  });
+  try {
+    assert.deepEqual(await api.interpretar('la de arriba',{opciones:['llanta_6'],opcionesDetalle:[{id:'llanta_6',nombre:'Alpha'}]}),{intencion:'seleccionar',opcion:1});
+  } finally {
+    for(const [k,v] of Object.entries(previos)) if(v===undefined)delete process.env[k];else process.env[k]=v;
+  }
+});
+
+test("rechaza negativos, cero, fracciones y restas sin perder el contexto ni consultar APIs", async () => {
+  for (const estado of [{},{id:p.id},{filtros:{categoria:'llanta'},opciones:[p.id]}]) {
+    for (const texto of ['-1','−1','opción -1','quiero -4 llantas','menos 1','quiero 4 menos 5 llantas','4-5','0','quiero 0 llantas','1.5','opción 1,5']) {
+      const r=await atender(texto,estado,{});
+      assert.match(r.texto,/número.*(?:válido|entero)/);
+      assert.deepEqual(r.estado,estado);
+      if (/menos|[-−]/.test(texto)) assert.match(r.texto,/negativo/);
+    }
+    assert.match((await atender('quiero 5 menos 4 llantas',estado,{})).texto,/sin operaciones/);
+  }
+  assert.match(cotizar(p,-1),/negativo/);
+  assert.match(cotizar(p,0),/número válido/);
+});
+
+test("valida cantidades y opciones devueltas por Gemini antes de consultar productos", async () => {
+  const estado={id:p.id};
+  for (const intencion of ['buscar','cantidad','seleccionar']) {
+    for (const campo of ['cantidad','opcion']) {
+      for (const valor of [-1,0,1.5,'4']) {
+        const r=await atender('mi pedido',estado,{interpretar:async()=>({intencion,[campo]:valor})});
+        assert.match(r.texto,/número/);
+        assert.deepEqual(r.estado,estado);
+      }
+    }
+  }
+});
+
+test("la validación numérica conserva códigos con guiones y medidas", async () => {
+  assert.equal((await atender('llanta_abc-123',{}, {producto:async()=>p})).estado.id,'llanta_abc-123');
+  let interpretado=false;
+  await atender('llanta 185/65-15',{}, {interpretar:async()=>{interpretado=true;return {intencion:'aclarar'}}});
+  assert.equal(interpretado,true);
+});

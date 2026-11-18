@@ -11,11 +11,10 @@ async function consultar(filtros, limite) {
   const r=await fetch(base+":runQuery",{method:"POST",headers:{"Content-Type":"application/json"},signal:AbortSignal.timeout(10000),body:JSON.stringify({structuredQuery:{
     from:[{collectionId:"productos"}],where:{compositeFilter:{op:"AND",filters:[campo("publicado",{booleanValue:true}),...filtros]}},limit:limite
   }})});
-if (!r.ok) {
-  const detalle = await r.text();
-  console.error("Respuesta de Meta:", detalle);
-  throw new Error(`Envío Meta ${r.status}: ${detalle}`);
-}
+  if (!r.ok) {
+    const detalle = await r.text();
+    throw new Error(`Firestore ${r.status}: ${detalle}`);
+  }
   return (await r.json()).filter(x=>x.document).map(({document:d})=>{
     const p={};
     for (const [k,v] of Object.entries(d.fields)) p[k]="integerValue" in v ? Number(v.integerValue) : Object.values(v)[0];
@@ -92,11 +91,14 @@ export const api={
     const modelo=variable("GEMINI_MODEL");
     const url="https://generativelanguage.googleapis.com/v1beta/models/"+encodeURIComponent(modelo)+":generateContent";
     const r=await fetch(url,{method:"POST",signal:AbortSignal.timeout(18000),headers:{"Content-Type":"application/json","x-goog-api-key":variable("GEMINI_API_KEY")},body:JSON.stringify({
-      systemInstruction:{parts:[{text:"Extrae los datos del mensaje en español. intencion: buscar si pide productos por marca, categoría o medida, o si precisa una búsqueda anterior, cantidad si continúa una cotización seleccionada, asesor si solicita una persona, aclarar en otro caso. categoria: llanta, aro, accesorio, servicio u otros. Faros, bases, tuercas, pestañas y seguros de aro son accesorio; reparación, cambio de ruedas y arenado son servicio; otros agrupa accesorios y servicios. En accesorio o servicio extrae en detalle solo las palabras del artículo y sus características, sin verbos ni cantidad. Ejemplo «¿tienen faros para Toyota Hilux?» da categoria accesorio y detalle «faro Toyota Hilux»; «tuercas para aros» da accesorio y detalle «tuerca aro». Conserva los términos relevantes al refinar, por ejemplo «¿y con LED?» tras faros Hilux da «faro Hilux LED». Si cambia de artículo sustituye el detalle anterior. Para una petición general de accesorios o servicios omite detalle. marca: copia la marca tal como la escribió el cliente, incluso con errores; el catálogo corrige las coincidencias claras. Extrae la marca mencionada, por ejemplo «quiero llantas Michelin» da buscar, categoria llanta, marca Michelin. Si contesta con la medida tras una búsqueda por marca, extrae la medida y usa buscar. Si especifica llantas o aros tras preguntar la categoría, usa buscar. medida completa, ej. 265/70 R16 o 16 x 6.00; Para «aros de 16» extrae categoria aro, medida 16. Para «aros ACTIVE» extrae buscar, categoria aro, marca ACTIVE. «llantas aro 16» sigue siendo categoria llanta. cantidad: unidades explícitas, par son dos. Las dimensiones no son cantidades. Omite datos desconocidos. Nunca calcules precios."}]},
-      contents:[{role:"user",parts:[{text:JSON.stringify({productoSeleccionado:Boolean(anterior.id),busquedaAnterior:anterior.filtros,mensaje:texto.slice(0,1600)})}]}],
-      generationConfig:{responseMimeType:"application/json",responseSchema:{type:"OBJECT",properties:{intencion:{type:"STRING",enum:["buscar","cantidad","asesor","aclarar"]},cantidad:{type:"INTEGER"},categoria:{type:"STRING",enum:["llanta","aro","accesorio","servicio","otros"]},detalle:{type:"STRING"},marca:{type:"STRING"},medida:{type:"STRING"}},required:["intencion"]}}
+      systemInstruction:{parts:[{text:"Extrae los datos del mensaje en español. intencion: seleccionar si elige una opción de opcionesMostradas; devuelve opcion como el número entero mostrado (desde 1). Usa solo la lista mostrada, no inventes opciones. Si la referencia es ambigua devuelve aclarar. No confundas el número de opción con la cantidad de unidades. buscar si pide productos por marca, categoría o medida, o si precisa una búsqueda anterior, cantidad si continúa una cotización seleccionada, asesor si solicita una persona, aclarar en otro caso. categoria: llanta, aro, accesorio, servicio u otros. Faros, bases, tuercas, pestañas y seguros de aro son accesorio; reparación, cambio de ruedas y arenado son servicio; otros agrupa accesorios y servicios. En accesorio o servicio extrae en detalle solo las palabras del artículo y sus características, sin verbos ni cantidad. Ejemplo «¿tienen faros para Toyota Hilux?» da categoria accesorio y detalle «faro Toyota Hilux»; «tuercas para aros» da accesorio y detalle «tuerca aro». Conserva los términos relevantes al refinar, por ejemplo «¿y con LED?» tras faros Hilux da «faro Hilux LED». Si cambia de artículo sustituye el detalle anterior. Para una petición general de accesorios o servicios omite detalle. marca: copia la marca tal como la escribió el cliente, incluso con errores; el catálogo corrige las coincidencias claras. Extrae la marca mencionada, por ejemplo «quiero llantas Michelin» da buscar, categoria llanta, marca Michelin. Si contesta con la medida tras una búsqueda por marca, extrae la medida y usa buscar. Si especifica llantas o aros tras preguntar la categoría, usa buscar. medida completa, ej. 265/70 R16 o 16 x 6.00; Para «aros de 16» extrae categoria aro, medida 16. Para «aros ACTIVE» extrae buscar, categoria aro, marca ACTIVE. «llantas aro 16» sigue siendo categoria llanta. cantidad: unidades explícitas, par son dos. Las dimensiones no son cantidades. Omite datos desconocidos. Nunca calcules precios."}]},
+      contents:[{role:"user",parts:[{text:JSON.stringify({productoSeleccionado:Boolean(anterior.id),busquedaAnterior:anterior.filtros,opcionesMostradas:anterior.opciones?.map((id,n) => ({numero:n+1,id,...anterior.opcionesDetalle?.find(p => p.id === id)})),mensaje:texto.slice(0,1600)})}]}],
+      generationConfig:{responseMimeType:"application/json",responseSchema:{type:"OBJECT",properties:{intencion:{type:"STRING",enum:["buscar","seleccionar","cantidad","asesor","aclarar"]},opcion:{type:"INTEGER"},cantidad:{type:"INTEGER"},categoria:{type:"STRING",enum:["llanta","aro","accesorio","servicio","otros"]},detalle:{type:"STRING"},marca:{type:"STRING"},medida:{type:"STRING"}},required:["intencion"]}}
     })});
-    if (!r.ok) throw new Error("Gemini "+r.status);
+    if (!r.ok) {
+  const detalle = await r.text();
+  throw new Error(`Gemini ${r.status}: ${detalle}`);
+}
     return JSON.parse((await r.json()).candidates[0].content.parts.filter(p=>!p.thought).map(p=>p.text).join(""));
   }
 };
