@@ -30,7 +30,7 @@ function Header({ onBuscar, resultadosBusqueda, mostrarBuscador = true }) {
         <NavLink className="brand" to="/">Inversiones Viera</NavLink>
         <nav className="desktopNav" aria-label="Navegación principal">
           {enlaces.map(({ to, label }) => <NavLink key={to} to={to} end={to === "/"}>{label}</NavLink>)}
-          <a href="https://wa.me/51937042895" target="_blank" rel="noopener noreferrer"><img src={whatsappIcon} alt="" />Cotizar</a>
+          <a href="https://wa.me/51949638333" target="_blank" rel="noopener noreferrer"><img src={whatsappIcon} alt="" />Cotizar</a>
         </nav>
         {!mostrarBuscador && <span className="searchToggle" aria-hidden="true" />}
         {mostrarBuscador && <button
@@ -61,7 +61,7 @@ function Header({ onBuscar, resultadosBusqueda, mostrarBuscador = true }) {
         {enlaces.map(({ to, label, icon }) => (
           <NavLink key={to} to={to} end={to === "/"}><img src={icon} alt="" /><span>{label}</span></NavLink>
         ))}
-        <a href="https://wa.me/51937042895" target="_blank" rel="noopener noreferrer"><img src={whatsappIcon} alt="" /><span>Cotizar</span></a>
+        <a href="https://wa.me/51949638333" target="_blank" rel="noopener noreferrer"><img src={whatsappIcon} alt="" /><span>Cotizar</span></a>
       </nav>
     </>
   );

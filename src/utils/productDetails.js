@@ -30,7 +30,7 @@ export function stockLabel(product) {
 
 export function quoteLink(product) {
   const message = ['Hola, quiero información sobre este producto:', productName(product), `Código: ${product.id}`, ...productSpecs(product).map(([label, value]) => `${label}: ${value}`), '¿Me confirman disponibilidad y cotización?'].join('\n');
-  return `https://wa.me/51937042895?text=${encodeURIComponent(message)}`;
+  return `https://wa.me/51949638333?text=${encodeURIComponent(message)}`;
 }
 
 export function productShareText(product, origin) {
